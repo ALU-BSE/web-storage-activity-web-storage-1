@@ -1,119 +1,56 @@
+# Web Storage Learning Activity Demo
 
-**Group Activity: Implementing Web Storage Mechanisms in an E-Commerce Site**  
-*Objective:* Apply knowledge of Cookies, Local Storage, and Session Storage to build a secure and functional e-commerce demo.  
+Team implementation for the classroom assignment using Node.js + Express and a browser client.
 
----
+## How to run
 
-### **Task 1: User Authentication with Cookies**  
-**Scenario:** Implement a login system using cookies to retain user sessions.  
-1. Create a login form with `username` and `password` fields.  
-2. On form submission, set a **secure cookie** named `authToken` with a dummy value (e.g., "user123").  
-   - Ensure the cookie uses `HttpOnly` and `Secure` flags.  
-   - Set an expiration date of 7 days.  
-3. Display a "Logout" button that deletes the `authToken` cookie.  
+1. Install dependencies:
 
-**Code Skeleton:**  
-```javascript
-// Set cookie on login
-document.cookie = "authToken=user123; expires=Fri, 31 Dec 2024 12:00:00 UTC; Secure; HttpOnly; path=/";
-
-// Delete cookie on logout
-document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+```bash
+npm install
 ```
 
-**Questions:**  
-- Why are `HttpOnly` and `Secure` flags important for cookies?  
-- How do session cookies differ from persistent cookies in this context?  
+2. Start the server:
 
----
-
-### **Task 2: Theme Preferences with Local Storage**  
-**Scenario:** Allow users to save their preferred theme (light/dark mode).  
-1. Add a theme toggle button to the page.  
-2. Store the selected theme ("light" or "dark") in **local storage**.  
-3. Retrieve the theme on page load and apply it automatically.  
-
-**Code Skeleton:**  
-```javascript
-// Save theme preference
-localStorage.setItem("theme", "dark");
-
-// Retrieve theme
-const savedTheme = localStorage.getItem("theme");
-document.body.classList.add(savedTheme);
+```bash
+npm start
 ```
 
-**Challenge:**  
-- Use `JSON.stringify` and `JSON.parse` to store/retrieve a settings object (e.g., `{ theme: "dark", fontSize: 16 }`).  
+3. Open `http://localhost:3000` in your browser.
 
-**Questions:**  
-- What happens if local storage exceeds its size limit? How would you handle this?  
+## What is implemented
 
----
+- Task 1 (Cookies authentication)
+  - Login form with username and password.
+  - `authToken` cookie is set on the server with:
+    - `HttpOnly`
+    - `Secure` in production (`NODE_ENV=production`)
+    - 7-day expiration
+  - Logout clears `authToken`.
 
-### **Task 3: Session-Specific Shopping Cart**  
-**Scenario:** Implement a cart that resets when the browser closes.  
-1. Use **session storage** to store cart items (e.g., `{ product: "Book", quantity: 2 }`).  
-2. Add a "Add to Cart" button that updates the cart.  
-3. Display cart items dynamically.  
+- Task 2 (Theme with localStorage)
+  - Theme toggle for light/dark mode.
+  - Settings object stored with `JSON.stringify` / `JSON.parse`:
+    - `{ theme, fontSize }`
 
-**Code Skeleton:**  
-```javascript
-// Add item to cart
-const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
-cart.push({ product: "Book", quantity: 1 });
-sessionStorage.setItem("cart", JSON.stringify(cart));
-```
+- Task 3 (Session cart)
+  - Cart stored in `sessionStorage`.
+  - Add item + quantity and render cart dynamically.
+  - Cart reset behavior matches session-only storage.
 
-**Debugging:**  
-- Intentionally introduce an error (e.g., forget `JSON.parse`) and ask students to fix it.  
+- Task 4 (Security)
+  - XSS-focused sanitization demo using `encodeURIComponent`.
+  - CSRF token generated server-side and validated on login.
+  - Optional challenge included: encrypted email storage with CryptoJS.
 
-**Questions:**  
-- Why is session storage suitable for this use case?  
+- Task 5 (Reflection)
+  - Comparison table and short answers are included directly in the app UI.
 
----
+## Notes for submission
 
-### **Task 4: Security Implementation**  
-**Scenario:** Secure the application against XSS and CSRF attacks.  
-1. Sanitize user input using `encodeURIComponent` before displaying it on the page.  
-2. Generate a CSRF token on the server (simulate with `Math.random()`) and include it in forms.  
-
-**Code Skeleton:**  
-```javascript
-// Sanitize input
-const userInput = "<script>alert('XSS')</script>";
-const sanitizedInput = encodeURIComponent(userInput);
-
-// Add CSRF token to form
-const csrfToken = Math.random().toString(36).substr(2);
-document.getElementById("form").innerHTML += `<input type="hidden" name="csrfToken" value="${csrfToken}">`;
-```
-
-**Challenge:**  
-- Encrypt sensitive data (e.g., user email) in local storage using a library like `CryptoJS`.  
-
----
-
-### **Task 5: Reflection and Comparison**  
-1. Fill out a comparison table based on the document:  
-
-| Criteria          | Cookies          | Local Storage    | Session Storage  |  
-|-------------------|------------------|------------------|------------------|  
-| Storage Limit     | 4KB              | 5-10MB           | 5-10MB           |  
-| Data Persistence  | Configurable     | Permanent        | Session-only     |  
-| Server Accessibility | Yes            | No               | No               |  
-
-2. **Discussion Questions:**  
-   - When would you use cookies over local storage?  
-   - What are the risks of storing passwords in session storage?  
-
----
-
-### **Final Challenge: Integration**  
-Combine all tasks into a single demo application where:  
-- Users log in (cookies).  
-- Customize their theme (local storage).  
-- Add items to a session-specific cart (session storage).  
-- Security measures are applied (CSRF tokens, input sanitization).  
-
-**Bonus:** Test the app in incognito mode and explain how storage behaviors differ.  
+- Use this repo URL for GitHub Classroom submission.
+- Include your completed course form as PDF in your official submission flow.
+- Recommended teamwork flow:
+  - feature branches per task
+  - clear commit messages
+  - pull request review before merge
