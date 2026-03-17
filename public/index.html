@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Storage Activity Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="noise"></div>
+
+    <header class="hero">
+      <p class="eyebrow">Group Activity Demo</p>
+      <h1>Web Storage Playground</h1>
+      <p>
+        One mini app showing cookies, localStorage, sessionStorage, CSRF checks,
+        and XSS-safe rendering.
+      </p>
+      <button id="themeToggle" class="ghost-btn" type="button">
+        Toggle Theme
+      </button>
+    </header>
+
+    <main class="grid">
+      <section class="panel">
+        <h2>1) Login with Cookies</h2>
+        <form id="loginForm" autocomplete="off">
+          <label>
+            Username
+            <input id="username" name="username" required />
+          </label>
+          <label>
+            Password
+            <input id="password" name="password" type="password" required />
+          </label>
+          <input id="csrfToken" name="csrfToken" type="hidden" />
+          <div class="row">
+            <button type="submit">Login</button>
+            <button id="logoutBtn" type="button" class="danger">Logout</button>
+          </div>
+        </form>
+        <p class="hint">
+          Note: <strong>HttpOnly</strong> cookies are set by the server, not by
+          JavaScript.
+        </p>
+        <pre id="authStatus" class="status">Checking session...</pre>
+      </section>
+
+      <section class="panel">
+        <h2>2) Theme in localStorage</h2>
+        <p>Theme is saved inside a settings object using JSON.</p>
+        <div class="row">
+          <label>
+            Font Size
+            <input id="fontSize" type="number" min="12" max="24" value="16" />
+          </label>
+          <button id="saveSettingsBtn" type="button">Save Settings</button>
+        </div>
+        <pre id="settingsView" class="status"></pre>
+
+        <h3>Challenge: Encrypt Email</h3>
+        <div class="row">
+          <input id="emailInput" type="email" placeholder="name@example.com" />
+          <button id="saveEmailBtn" type="button">Encrypt & Save</button>
+          <button id="showEmailBtn" type="button" class="ghost-btn">
+            Decrypt
+          </button>
+        </div>
+        <pre id="emailView" class="status"></pre>
+      </section>
+
+      <section class="panel">
+        <h2>3) Session Cart</h2>
+        <div class="row">
+          <select id="productSelect">
+            <option value="Road Cone">Road Cone</option>
+            <option value="Reflective Jacket">Reflective Jacket</option>
+            <option value="Safety Gloves">Safety Gloves</option>
+          </select>
+          <input id="qtyInput" type="number" min="1" value="1" />
+          <button id="addToCartBtn" type="button">Add to Cart</button>
+        </div>
+        <ul id="cartList"></ul>
+        <button id="clearCartBtn" type="button" class="ghost-btn">
+          Clear Cart
+        </button>
+        <p class="hint">
+          Cart lives in sessionStorage and resets when the browser session ends.
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2>4) Security Checks</h2>
+        <label>
+          Try XSS input
+          <input id="xssInput" value="<script>alert('XSS')</script>" />
+        </label>
+        <button id="sanitizeBtn" type="button">Sanitize Input</button>
+        <pre id="sanitizedView" class="status"></pre>
+      </section>
+
+      <section class="panel full">
+        <h2>5) Reflection & Comparison</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Criteria</th>
+              <th>Cookies</th>
+              <th>Local Storage</th>
+              <th>Session Storage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Storage Limit</td>
+              <td>~4KB</td>
+              <td>~5-10MB</td>
+              <td>~5-10MB</td>
+            </tr>
+            <tr>
+              <td>Persistence</td>
+              <td>Configurable</td>
+              <td>Until cleared</td>
+              <td>Tab/session only</td>
+            </tr>
+            <tr>
+              <td>Server Accessibility</td>
+              <td>Yes</td>
+              <td>No</td>
+              <td>No</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="qa">
+          <p>
+            <strong>Why HttpOnly + Secure?</strong> HttpOnly blocks JavaScript
+            access to sensitive cookies, and Secure sends cookies only over
+            HTTPS.
+          </p>
+          <p>
+            <strong>Session vs persistent cookies?</strong> Session cookies
+            expire when the browser closes; persistent cookies remain until
+            their explicit expiry date.
+          </p>
+          <p>
+            <strong>If localStorage is full?</strong> A QuotaExceededError is
+            thrown. Handle with try/catch, keep payloads small, and clean old
+            entries.
+          </p>
+          <p>
+            <strong>When use cookies over localStorage?</strong> When the server
+            must read auth/session data on each request.
+          </p>
+          <p>
+            <strong>Risk of passwords in sessionStorage?</strong> XSS can still
+            steal them, so passwords should never be stored in browser storage.
+          </p>
+          <p>
+            <strong>Incognito behavior</strong> Storage usually exists only
+            during the private window and is wiped when it closes.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
+      integrity="sha512-foA1f4YdY7qAoLTW1E58uB9SNPfvKTfXAwvN16Au6J2Pp2AtZfQaA8zqM+Q8JrIoYNewWWm6yOD87mpy4V/mQw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="app.js"></script>
+  </body>
+</html>
